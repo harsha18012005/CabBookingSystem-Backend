@@ -1,17 +1,13 @@
-
 FROM openjdk:17-jdk-slim
-
 
 WORKDIR /app
 
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
-
-COPY backend/src ./src
+COPY src ./src
 
 RUN chmod +x mvnw
-
 RUN ./mvnw clean package -DskipTests
 
 EXPOSE 8080
