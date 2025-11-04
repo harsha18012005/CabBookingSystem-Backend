@@ -1,5 +1,4 @@
-
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-jammy
 
 RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 
@@ -16,6 +15,7 @@ ENV SPRING_DATASOURCE_USERNAME=harsha
 ENV SPRING_DATASOURCE_PASSWORD=uLwwhHmgu6YRSoAk1nv5JI8YBPZsNuYc
 
 CMD ["java", "-jar", "target/cabbooking-0.0.1-SNAPSHOT.jar"]
+
 
 
 
