@@ -8,7 +8,10 @@ COPY .mvn .mvn
 RUN ./mvnw dependency:go-offline -B
 
 # Copy source and build
-COPY src src
+COPY controller 
+COPY entity
+COPY repository
+COPY service
 RUN ./mvnw package -DskipTests
 
 # ---- Run stage ----
@@ -22,6 +25,7 @@ ENV SERVER_PORT=10000
 EXPOSE 8080
 
 CMD ["java", "-jar", "app.jar", "--server.port=8080", "--server.address=0.0.0.0"]
+
 
 
 
