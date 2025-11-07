@@ -1,20 +1,29 @@
-FROM eclipse-temurin:17-jdk-jammy
-
-RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
-
+# ---- Build stage ----
+FROM eclipse-temurin:17-jdk-jammy AS build
 WORKDIR /app
 
-COPY . .
+# Copy pom.xml and download dependencies
+COPY mvnw pom.xml ./
+COPY .mvn .mvn
+RUN ./mvnw dependency:go-offline -B
 
-RUN mvn clean package -DskipTests
+# Copy source and build
+COPY src src
+RUN ./mvnw package -DskipTests
 
+# ---- Run stage ----
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
+
+# Copy jar from build stage
+COPY --from=build /app/target/*.jar app.jar
+
+ENV SERVER_PORT=10000
 EXPOSE 8080
 
-ENV SPRING_DATASOURCE_URL=jdbc:postgresql://dpg-d3qgr38dl3ps73bur920-a.oregon-postgres.render.com:5432/cabbooking_cglc?sslmode=require
-ENV SPRING_DATASOURCE_USERNAME=harsha
-ENV SPRING_DATASOURCE_PASSWORD=uLwwhHmgu6YRSoAk1nv5JI8YBPZsNuYc
+CMD ["java", "-jar", "app.jar", "--server.port=8080", "--server.address=0.0.0.0"]
 
-CMD ["java", "-jar", "target/cabbooking-0.0.1-SNAPSHOT.jar"]
+
 
 
 
